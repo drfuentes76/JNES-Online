@@ -1,14 +1,19 @@
 
 let nes;
-let canvasReady = false;
 
-function initNES() {
+function waitForCanvasAndInit() {
     const canvas = document.getElementById("nes-canvas");
     if (!canvas) {
-        console.error("Canvas not found.");
-        return;
+        console.error("Canvas not found");
+        return setTimeout(waitForCanvasAndInit, 100);
     }
 
+    if (!window.jsnes) {
+        console.error("JSNES engine not loaded");
+        return setTimeout(waitForCanvasAndInit, 100);
+    }
+
+    console.log("Initializing NES...");
     nes = new jsnes.NES({
         onFrame: function (framebuffer_24) {
             const ctx = canvas.getContext("2d");
@@ -21,57 +26,25 @@ function initNES() {
         onStatusUpdate: function () { },
         onAudioSample: function () { }
     });
-
     window.nes = nes;
-    canvasReady = true;
-}
 
-function loadROMFromURL(url) {
-    fetch(url)
-        .then(res => res.arrayBuffer())
+    console.log("Loading default ROM (tetris.nes)...");
+    fetch("tetris.nes")
+        .then(res => {
+            if (!res.ok) throw new Error("ROM not found");
+            return res.arrayBuffer();
+        })
         .then(buffer => {
-            if (!nes) initNES();
             nes.loadROM(new Uint8Array(buffer));
             nes.frame();
+            console.log("ROM loaded and emulator started");
+        })
+        .catch(err => {
+            console.error("ROM load failed:", err.message);
         });
 }
 
-function loadSelectedROM() {
-    const selector = document.getElementById("romSelector");
-    if (selector) {
-        loadROMFromURL(selector.value);
-    }
-}
-
-function uploadCustomROM() {
-    const input = document.getElementById("romUploader");
-    const file = input.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function () {
-            if (!nes) initNES();
-            nes.loadROM(new Uint8Array(reader.result));
-            nes.frame();
-
-            const selector = document.getElementById("romSelector");
-            const newOption = document.createElement("option");
-            newOption.text = file.name;
-            newOption.value = file.name;
-            selector.add(newOption);
-            selector.value = file.name;
-        };
-        reader.readAsArrayBuffer(file);
-    }
-}
-
-window.addEventListener("load", () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const room = urlParams.get("room");
-    initNES(); // Always init NES early
-    if (room) {
-        document.getElementById("room").value = room;
-        document.getElementById("mode").value = "multi";
-        document.getElementById("multiplayer-options").style.display = "block";
-        joinRoom();
-    }
+window.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM fully loaded");
+    waitForCanvasAndInit();
 });
