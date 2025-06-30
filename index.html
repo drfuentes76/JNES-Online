@@ -3,29 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Multiplayer Tetris</title>
-    <script src="jsnes.min.js"></script>
-    <script src="main.js"></script>
-    <script src="chat.js"></script>
-    <script src="voice.js"></script>
-    <script src="socket.js"></script>
-<script src="cloud.js"></script>
-<script src="leaderboard.js"></script>
     <link rel="stylesheet" href="style.css">
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="jsnes.min.js"></script>
+    <script src="main.js" defer></script>
+    <script src="chat.js" defer></script>
+    <script src="voice.js" defer></script>
+    <script src="socket.js" defer></script>
+    <script src="cloud.js" defer></script>
+    <script src="leaderboard.js" defer></script>
+<script src="touch.js" defer></script>
 </head>
 <body>
     <h1>Multiplayer Tetris</h1>
+
+    <label for="username">Enter Username:</label>
+    <input type="text" id="username" placeholder="Your name">
+    <br><br>
+
+    <label for="room">Enter Room Code:</label>
+    <input type="text" id="room" placeholder="Room name">
+    <button onclick="joinRoom()">Start Game</button>
+    <br><br>
+
+    <label for="romSelector">Select ROM:</label>
     <select id="romSelector" onchange="loadSelectedROM()">
-        <option value="tetris.nes">Tetris (default)</option>
+        <option value="tetris.nes">Tetris</option>
+        <option value="mario.nes">Super Mario</option>
+        <option value="zelda.nes">Zelda</option>
     </select>
     <input type="file" id="romUploader" accept=".nes" onchange="uploadCustomROM()" />
-    <canvas id="nes-canvas" width="256" height="240" style="display:block; margin-top:1em;"></canvas>
-    <div id="chat"></div>
-    <input type="text" id="message" placeholder="Type message" />
-    <button onclick="sendMessage()">Send</button>
-<div id="leaderboard" style="margin-top:1em;"></div>
+    <br><br>
+
+    <canvas id="nes-canvas" width="256" height="240" style="border:1px solid #000;"></canvas>
+    <br>
+
+    <div id="chatbox" style="margin-top:1em;">
+        <h3>Live Chat</h3>
+        <div id="chat" style="height:100px; overflow-y:scroll; border:1px solid #ccc; padding:5px;"></div>
+        <input type="text" id="message" placeholder="Type message" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <div id="leaderboard" style="margin-top:2em;"></div>
 </body>
 </html>

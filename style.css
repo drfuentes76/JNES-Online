@@ -1,1 +1,48 @@
 body { font-family: sans-serif; }
+#touch-controls {
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+
+#touch-controls .control {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid white;
+    padding: 10px;
+    font-size: 14px;
+    color: white;
+    border-radius: 5px;
+    flex: 1 1 60px;
+}
+
+@media (orientation: landscape) and (max-width: 768px) {
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    canvas#nes-canvas {
+        width: 100vw !important;
+        height: 100vh !important;
+        display: block;
+    }
+
+    #touch-controls {
+        position: absolute;
+        bottom: 10px;
+        opacity: 0.5;
+    }
+
+    .control {
+        font-size: 18px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
