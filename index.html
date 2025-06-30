@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multiplayer Tetris</title>
+    <script src="jsnes.min.js"></script>
+    <script src="main.js"></script>
+    <script src="chat.js"></script>
+    <script src="voice.js"></script>
+    <script src="socket.js"></script>
+<script src="cloud.js"></script>
+<script src="leaderboard.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+    <h1>Multiplayer Tetris</h1>
+    <select id="romSelector" onchange="loadSelectedROM()">
+        <option value="tetris.nes">Tetris (default)</option>
+    </select>
+    <input type="file" id="romUploader" accept=".nes" onchange="uploadCustomROM()" />
+    <canvas id="nes-canvas" width="256" height="240" style="display:block; margin-top:1em;"></canvas>
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Type message" />
+    <button onclick="sendMessage()">Send</button>
+<div id="leaderboard" style="margin-top:1em;"></div>
+</body>
+</html>
