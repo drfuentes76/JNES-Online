@@ -1,3 +1,4 @@
+
 let nes;
 
 function initNES() {
@@ -14,6 +15,7 @@ function initNES() {
         onStatusUpdate: function () { },
         onAudioSample: function () { }
     });
+    window.nes = nes;
 }
 
 function loadROMFromURL(url) {
@@ -50,7 +52,14 @@ function uploadCustomROM() {
     }
 }
 
-window.onload = () => {
+window.addEventListener("load", () => {
     initNES();
-    loadROMFromURL("tetris.nes");
-};
+    const urlParams = new URLSearchParams(window.location.search);
+    const room = urlParams.get("room");
+    if (room) {
+        document.getElementById("room").value = room;
+        document.getElementById("mode").value = "multi";
+        document.getElementById("multiplayer-options").style.display = "block";
+        joinRoom();
+    }
+});

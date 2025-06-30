@@ -14,18 +14,32 @@
     <script src="socket.js" defer></script>
     <script src="cloud.js" defer></script>
     <script src="leaderboard.js" defer></script>
-<script src="touch.js" defer></script>
+    <script src="touch.js" defer></script>
+<script src="firebase-auth.js" defer></script>
+<script src="replay.js" defer></script>
 </head>
 <body>
     <h1>Multiplayer Tetris</h1>
 
     <label for="username">Enter Username:</label>
-    <input type="text" id="username" placeholder="Your name">
+    <input type="text" id="username" placeholder="Your name" />
     <br><br>
 
-    <label for="room">Enter Room Code:</label>
-    <input type="text" id="room" placeholder="Room name">
-    <button onclick="joinRoom()">Start Game</button>
+    <label for="mode">Select Mode:</label>
+    <select id="mode">
+        <option value="single">Single Player</option>
+        <option value="multi">Multiplayer</option>
+    </select>
+    <br><br>
+
+    <div id="multiplayer-options" style="display: none;">
+        <label for="room">Enter Room Code:</label>
+        <input type="text" id="room" placeholder="Room name" />
+        <button onclick="joinRoom()">Start Multiplayer</button>
+        <p id="inviteLink" style="margin-top: 10px;"></p>
+    </div>
+
+    <button onclick="startSinglePlayer()">Start Single Player</button>
     <br><br>
 
     <label for="romSelector">Select ROM:</label>
@@ -38,7 +52,6 @@
     <br><br>
 
     <canvas id="nes-canvas" width="256" height="240" style="border:1px solid #000;"></canvas>
-    <br>
 
     <div id="chatbox" style="margin-top:1em;">
         <h3>Live Chat</h3>
@@ -48,5 +61,30 @@
     </div>
 
     <div id="leaderboard" style="margin-top:2em;"></div>
+
+    <script>
+        document.getElementById("mode").addEventListener("change", () => {
+            const mode = document.getElementById("mode").value;
+            document.getElementById("multiplayer-options").style.display = mode === "multi" ? "block" : "none";
+        });
+
+        function startSinglePlayer() {
+            const selectedROM = document.getElementById("romSelector").value;
+            fetch(selectedROM)
+                .then(res => res.arrayBuffer())
+                .then(buffer => {
+                    window.nes.loadROM(new Uint8Array(buffer));
+                    window.nes.frame();
+                });
+        }
+
+        function joinRoom() {
+            const room = document.getElementById("room").value;
+            const inviteText = "Invite link: " + window.location.origin + window.location.pathname + "?room=" + encodeURIComponent(room);
+            document.getElementById("inviteLink").textContent = inviteText;
+            // Multiplayer emulator sync would go here
+            startSinglePlayer();  // Use this for demo; replace with multiplayer sync init
+        }
+    </script>
 </body>
 </html>
