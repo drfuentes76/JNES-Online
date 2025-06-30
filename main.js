@@ -1,19 +1,13 @@
 
 let nes;
 
-function waitForCanvasAndInit() {
+function initNES() {
     const canvas = document.getElementById("nes-canvas");
-    if (!canvas) {
-        console.error("Canvas not found");
-        return setTimeout(waitForCanvasAndInit, 100);
+    if (!canvas || !window.jsnes) {
+        console.error("Canvas or JSNES engine not ready.");
+        return false;
     }
 
-    if (!window.jsnes) {
-        console.error("JSNES engine not loaded");
-        return setTimeout(waitForCanvasAndInit, 100);
-    }
-
-    console.log("Initializing NES...");
     nes = new jsnes.NES({
         onFrame: function (framebuffer_24) {
             const ctx = canvas.getContext("2d");
@@ -23,28 +17,42 @@ function waitForCanvasAndInit() {
             }
             ctx.putImageData(imageData, 0, 0);
         },
-        onStatusUpdate: function () { },
-        onAudioSample: function () { }
+        onStatusUpdate: function () {},
+        onAudioSample: function () {}
     });
-    window.nes = nes;
 
-    console.log("Loading default ROM (tetris.nes)...");
-    fetch("tetris.nes")
-        .then(res => {
-            if (!res.ok) throw new Error("ROM not found");
-            return res.arrayBuffer();
-        })
+    window.nes = nes;
+    console.log("NES initialized.");
+    return true;
+}
+
+function startSinglePlayer() {
+    console.log("Starting single-player mode...");
+    const romSelector = document.getElementById("romSelector");
+    if (!romSelector) {
+        console.error("ROM selector not found.");
+        return;
+    }
+
+    const rom = romSelector.value || "tetris.nes";
+
+    if (!nes) {
+        const ready = initNES();
+        if (!ready) return;
+    }
+
+    fetch(rom)
+        .then(res => res.arrayBuffer())
         .then(buffer => {
             nes.loadROM(new Uint8Array(buffer));
             nes.frame();
-            console.log("ROM loaded and emulator started");
+            console.log("ROM loaded successfully.");
         })
         .catch(err => {
-            console.error("ROM load failed:", err.message);
+            console.error("Failed to load ROM:", err.message);
         });
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM fully loaded");
-    waitForCanvasAndInit();
+    console.log("DOM loaded. Emulator not yet started.");
 });
